@@ -1,1 +1,23 @@
 /* You can add global styles to this file, and also import other style files */
+button {
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  background-color: #4caf50;
+  color: white;
+  &:hover {
+    background-color: #3e8e41;
+    cursor: pointer;
+  }
+  &:active {
+    outline: none;
+    background-color: #21aa26;
+  }
+}
+
+.container {
+  display: flex;
+  ul {
+    width: 10%;
+  }
+}

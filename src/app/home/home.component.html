@@ -1,0 +1,9 @@
+<div class="container-list">
+  <button
+    class="card"
+    *ngFor="let pokemon of pokemons$ | async"
+    (click)="clickPokemon(pokemon)"
+  >
+    <h3>{{ pokemon?.name }}</h3>
+  </button>
+</div>

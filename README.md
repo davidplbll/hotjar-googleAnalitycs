@@ -1,27 +1,86 @@
-# Analytics
+# CodelabGoogleAnalytics
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.9.
+### 1 Add google code in index.html
 
-## Development server
+cambiar xxxxx por id asigando
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+```
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=xxxxx"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+</script>
+```
 
-## Code scaffolding
+### 2 Observer navigation ends (registro de navegación de url)
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+importar libs
 
-## Build
+```
+    import { NavigationEnd, Router } from '@angular/router';
+    declare var gtag;
+```
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+inyectar libs
 
-## Running unit tests
+```
+constructor(private router: Router)
+```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+cambiar xxxxx por id asigando
 
-## Running end-to-end tests
+```
+const navEndEvents$ = this.router.events
+.pipe(
+  filter(event => event instanceof NavigationEnd)
+);
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+navEndEvents$.subscribe((event: NavigationEnd) => {
+  gtag('config', 'xxxxxx', {
+    'page_path': event.urlAfterRedirects
+  });
+});
+```
 
-## Further help
+### 3 Cutom events
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+importar lib
+
+```
+    declare var gtag;
+```
+
+función para registro de eventos
+
+```
+  generateEvent(eventName: string, eventData: object): void {
+    gtag('event', eventName, eventData);
+  }
+```
+
+### 4 error metrics
+
+para usarce en el interceptor o en cathError, en caso de tener un objeto en el error se guarda como string
+
+en caso de que den una categoria especifica para verlo en analytics cambiar sefundo parametro de la función gtag y event_category del objeto
+
+```
+generateEventError(error) {
+    gtag('event', 'error', {
+      event_category: 'error',
+      event_label: error?.message ?? '',
+      value: error?.status ?? '',
+      ...Object.keys(error).reduce((acc, key) => {
+        acc[key] =
+          typeof error[key] !== 'object'
+            ? error[key]
+            : JSON.stringify(error[key]);
+        return acc;
+      }, {}),
+    });
+  }
+```
+
+
